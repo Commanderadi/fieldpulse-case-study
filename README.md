@@ -1,6 +1,6 @@
 # FieldPulse: Field Sales Force Automation (Case Study)
 
-> **Live product:** [fieldpulse.in](https://fieldpulse.in) · Source is private; this repo documents the architecture and engineering decisions.
+> **Live product:** [fieldpulse.in](https://fieldpulse.in) · Source is private; this repo gives an overview of the product and my role.
 
 FieldPulse is a field sales force automation platform I **conceived and built solo** at ELETTRO, a manufacturing company. It started as an internal tool and was later **spun out as a SaaS product** for other distributors.
 
@@ -44,28 +44,6 @@ Field sales teams at manufacturers and distributors report visits, travel and or
 - Designed for multiple tenants so it could be offered to other distributors
 
 ---
-
-## Architecture
-
-```
- Flutter app ──HTTPS──▶ nginx ──▶ NestJS API ──▶ PostgreSQL
-      │                             │   │
-      │  photos                     │   └──▶ Redis (pub/sub, caching)
-      └────────────▶ Cloudflare R2  │
-                                    └──Socket.IO──▶ React admin (live map)
-
- GitHub Actions ──build/test/deploy──▶ Hetzner (Docker)
-```
-
-
----
-
-## Engineering decisions
-
-- **Self-hosting on Hetzner instead of a PaaS:** much lower cost for an always-on API with WebSockets, full control over nginx and TLS, and predictable pricing for a SaaS with small margins.
-- **Redis between the API and Socket.IO:** location updates fan out to admin clients without polling the database.
-- **Photos straight to object storage (R2):** the API never streams large uploads, which keeps it light and cheap.
-- **Reliability patterns:** retry logic, idempotent handlers for async work and structured logging, so flaky mobile networks don't create duplicate visits.
 
 ## Outcome
 
